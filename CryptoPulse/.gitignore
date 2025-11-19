@@ -5,5 +5,5 @@ NTUSER.DAT*
 *.LOG2
 *.ini
 
-# Ignore parent folders
+# Ignore parent directories
 ../*
