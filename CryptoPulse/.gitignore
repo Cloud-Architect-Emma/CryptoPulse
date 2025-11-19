@@ -53,3 +53,16 @@ venv/
 node_modules/
 dist/
 build/
+
+
+# Ignore Windows system files
+*.regtrans-ms
+NTUSER.DAT*
+*.LOG1
+*.LOG2
+*.blf
+*.ini
+
+# Ignore parent directories (stop Git from tracking outside folders)
+../*
+
