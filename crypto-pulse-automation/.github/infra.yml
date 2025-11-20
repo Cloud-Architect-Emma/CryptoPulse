@@ -3,7 +3,7 @@ name: Deploy to S3
 on:
   push:
     branches:
-      - main
+      - main  # Trigger deployment when pushing to main branch
 
 jobs:
   deploy:
@@ -14,22 +14,22 @@ jobs:
       contents: read
 
     steps:
-      # 1. Checkout the repo
+      # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Configure AWS credentials
+      # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
-          aws-region: us-east-1  # replace with your region
+          aws-region: us-east-1  # replace if your region is different
 
-      # 3. Debug - list repo root files
-      - name: List repo root files
+      # List repo root files to confirm they exist
+      - name: List repo files
         run: ls -lh $GITHUB_WORKSPACE
 
-      # 4. Sync only HTML, CSS, JS, images to S3 bucket root
+      # Sync all HTML, CSS, JS, images to S3 root
       - name: Sync site files to S3
         run: |
           aws s3 sync $GITHUB_WORKSPACE s3://cryptopulse-site/ --delete \
@@ -44,21 +44,24 @@ jobs:
             --include "*.jpg" \
             --include "*.jpeg" \
             --include "*.gif"
-          
-          echo "S3 bucket contents after sync:"
-          aws s3 ls s3://cryptopulse-site/
 
-      # 5. Confirm docs.html exists in S3
-      - name: Check if docs.html exists
+      # Debug: list S3 files after sync
+      - name: List S3 bucket contents
+        run: aws s3 ls s3://cryptopulse-site/ --recursive
+
+      # Optional: Check that your key files exist
+      - name: Confirm main HTML files
         run: |
-          if aws s3 ls s3://cryptopulse-site/docs.html; then
-            echo "docs.html successfully uploaded!"
-          else
-            echo "ERROR: docs.html not found in S3!"
-            exit 1
-          fi
+          for file in index.html crypto.html docs.html dashboard.html getting-started.html; do
+            if aws s3 ls s3://cryptopulse-site/$file; then
+              echo "$file exists in S3 "
+            else
+              echo "ERROR: $file not found in S3 ❌"
+              exit 1
+            fi
+          done
 
-      # 6. Invalidate CloudFront cache
+      # Invalidate CloudFront cache to serve latest files
       - name: Invalidate CloudFront cache
         run: |
           aws cloudfront create-invalidation \
