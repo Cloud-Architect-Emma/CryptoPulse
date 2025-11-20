@@ -51,7 +51,7 @@ jobs:
       - name: Confirm docs.html upload
         run: aws s3 ls s3://$S3_BUCKET_NAME/docs.html
 
-      # Invalidate CloudFront cache
+      # ✅ Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
         run: |
           INVALIDATION_ID=$(aws cloudfront create-invalidation \
@@ -62,3 +62,7 @@ jobs:
           aws cloudfront wait invalidation-completed \
             --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
             --id $INVALIDATION_ID
+
+      # Show deployment URL
+      - name: Show deployment URL
+        run: echo "Site deployed at https://d${CLOUDFRONT_DISTRIBUTION_ID}.cloudfront.net"
