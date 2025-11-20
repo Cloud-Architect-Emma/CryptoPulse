@@ -1,19 +1,64 @@
-name: Test AWS OIDC
+name: Deploy to S3
 
-on: [workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # allows manual trigger
+
+env:
+  BUCKET_NAME: "cryptopulse-site"
+  AWS_REGION: "us-east-1"
+
+permissions:
+  id-token: write   # needed for OIDC
+  contents: read    # needed for checkout
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Configure AWS
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # 2. Configure AWS credentials using OIDC
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
-          aws-region: us-east-1
-      - name: List S3 bucket
-        run: aws s3 ls s3://cryptopulse-site/
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 3. Debug: list repo files
+      - name: List repo root files
+        run: ls -lh $GITHUB_WORKSPACE
+
+      # 4. Sync all HTML/CSS/JS/images to S3 bucket
+      - name: Sync site files to S3
+        run: |
+          aws s3 sync $GITHUB_WORKSPACE s3://$BUCKET_NAME/ --delete --exact-timestamps \
+            --exclude ".git/*" \
+            --exclude ".github/*" \
+            --exclude "README.md" \
+            --include "*.html" \
+            --include "*.css" \
+            --include "*.js" \
+            --include "*.png" \
+            --include "*.jpg" \
+            --include "*.jpeg" \
+            --include "*.gif"
+
+      # 5. Debug: confirm files in S3
+      - name: List S3 bucket contents
+        run: aws s3 ls s3://$BUCKET_NAME/ --recursive
+
+      # 6. Invalidate CloudFront cache
+      - name: Invalidate CloudFront cache
+        run: |
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CF_DIST_ID }} \
+            --paths "/*" \
+            --query 'Invalidation.Id' --output text)
+          echo "Invalidation ID: $INVALIDATION_ID"
+          aws cloudfront wait invalidation-completed --distribution-id ${{ secrets.CF_DIST_ID }} --id $INVALIDATION_ID
