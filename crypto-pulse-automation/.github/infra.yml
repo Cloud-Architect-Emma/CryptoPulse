@@ -27,26 +27,28 @@ jobs:
 
       # Step 3: Debug - list repo contents
       - name: List repository files
-        run: ls -R
-
-      # Step 4: Sync all site files to S3 bucket root
-      - name: Sync site files to S3
         run: |
+          echo "Repo root contents:"
+          ls -lh
+          echo "All files recursively:"
+          ls -R
+
+      # Step 4: Sync all repo root files to S3 bucket root
+      - name: Sync repo root to S3 bucket
+        run: |
+          echo "Syncing repo root to S3 bucket..."
           aws s3 sync . s3://cryptopulse-site/ --delete \
             --exclude ".git/*" \
             --exclude ".github/*" \
-            --exclude "README.md" \
-            --include "*.html" \
-            --include "*.css" \
-            --include "*.js" \
-            --include "*.png" \
-            --include "*.jpg" \
-            --include "*.jpeg" \
-            --include "*.gif"
+            --exclude "README.md"
+          
+          echo "Listing S3 bucket contents after sync:"
+          aws s3 ls s3://cryptopulse-site/
 
       # Step 5: Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
         run: |
+          echo "Invalidating CloudFront cache..."
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CF_DIST_ID }} \
             --paths "/*"
