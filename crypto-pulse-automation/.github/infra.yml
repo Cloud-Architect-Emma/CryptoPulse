@@ -25,43 +25,41 @@ jobs:
           role-to-assume: ${{ secrets.AWS_GITHUB_ROLE_ARN }}
           aws-region: us-east-1  # replace if your region is different
 
-      # List repo root files to confirm they exist
+      # Debug: list repo root files
       - name: List repo files
         run: ls -lh $GITHUB_WORKSPACE
 
-      # Sync all HTML, CSS, JS, images to S3 root
+      # ✅ Sync only HTML, CSS, JS, and images
       - name: Sync site files to S3
         run: |
-          aws s3 sync $GITHUB_WORKSPACE s3://cryptopulse-site/ --delete \
-            --exclude ".git/*" \
-            --exclude ".github/*" \
-            --exclude "README.md" \
-            --exclude "*.md" \
+          aws s3 sync $GITHUB_WORKSPACE s3://cryptopulse-site/ --delete --exact-timestamps \
+            --exclude "*" \
             --include "*.html" \
             --include "*.css" \
             --include "*.js" \
             --include "*.png" \
             --include "*.jpg" \
             --include "*.jpeg" \
-            --include "*.gif"
+            --include "*.gif" \
+            --include "*.svg"
 
-      # Debug: list S3 files after sync
+      # Debug: list S3 contents after sync
       - name: List S3 bucket contents
         run: aws s3 ls s3://cryptopulse-site/ --recursive
 
-      # Optional: Check that your key files exist
+      # Confirm key HTML files exist in S3
       - name: Confirm main HTML files
         run: |
           for file in index.html crypto.html docs.html dashboard.html getting-started.html; do
             if aws s3 ls s3://cryptopulse-site/$file; then
-              echo "$file exists in S3 "
+              echo "$file exists in S3 ✅"
             else
               echo "ERROR: $file not found in S3 ❌"
               exit 1
             fi
           done
 
-      # Invalidate CloudFront cache to serve latest files
+      # Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
         run: |
           aws cloudfront create-invalidation \
