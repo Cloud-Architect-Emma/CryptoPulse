@@ -65,7 +65,7 @@ S3 sync + CloudFront invalidation (where applicable)
 
 Even though the live demo uses GitHub Pages, the CI pipeline remains AWS-ready.
 
-Workflow Includes
+**Workflow Includes**
 
 Code validation
 
