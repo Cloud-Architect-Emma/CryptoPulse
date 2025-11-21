@@ -1,4 +1,4 @@
-# ** CryptoPulse-app – End-to-End AWS + GitHub OIDC DevOps Project
+# CryptoPulse-app – End-to-End AWS + GitHub OIDC DevOps Project
 
 CryptoPulse is a production-ready static crypto insights application built with an enterprise-grade AWS architecture, full CI/CD automation using GitHub Actions, and secure deployments using OIDC (no secret keys).
 
@@ -13,7 +13,7 @@ Available for cloning
 Explore, fork, improve the UI
 Ideal for DevOps/Cloud portfolio demonstration
 
-##  **Architecture Overview
+##  Architecture Overview
 
 This project uses a full production-like AWS stack:
 
@@ -29,12 +29,12 @@ GitHub Actions CI/CD → automated build, deployment & invalidation
 
 Terraform → Infrastructure as Code (IaC) for AWS resources
 
-## **Architecture Diagram:
+## Architecture Diagram:
 ![Architecture Diagram](screenshots/OIDC%20App.gif)
 
 📁 For more screenshots, open the screenshots folder in the repository.
 
-## **CI/CD Pipeline (AWS OIDC — No Access Keys Required)
+## CI/CD Pipeline (AWS OIDC — No Access Keys Required)
 
 This project uses GitHub Actions + AWS IAM OIDC to deploy securely:
 
@@ -46,7 +46,7 @@ Pipeline assumes an IAM role with trust relationship
 
 S3 sync + CloudFront invalidation happens automatically
 
-## **Workflow Includes:
+## Workflow Includes:
 
 Code validation
 
@@ -61,7 +61,7 @@ You can request the workflow YAML and Terraform snippets inside the repo or read
 .github/workflows/deploy.yml  
 terraform/
 
-## **Tech Stack
+## Tech Stack
 ```
 Frontend
 
@@ -86,13 +86,13 @@ SNS (for optional alerts)
 Route 53 (health checks)
 ```
 
-## **DevOps
+## DevOps
 ```
 GitHub Actions
 
 OIDC Authentication
 ```
-## **Terraform
+## Terraform
 📁 Project Structure
 .
 ├── index.html
@@ -107,7 +107,7 @@ OIDC Authentication
         ├── OIDC App.gif
         └── *.png (other images)
 
-## **How to Deploy This Yourself
+## How to Deploy This Yourself
 Clone the Repository
 git clone https://github.com/Cloud-Architect-Emma/cryptopulse-app.git
 cd cryptopulse-app
@@ -125,7 +125,7 @@ Push Code → Automatic Deployment
 
 GitHub Actions + OIDC will deploy automatically to your S3 bucket.
 
-## **Monitoring & Observability
+## Monitoring & Observability
 
 CloudWatch Metrics
 
@@ -139,7 +139,7 @@ Error rate tracking
 
 Latency metrics
 
-## **Contributing
+## Contributing
 
 Want to improve the app UI, add animations, or enhance the pipeline?
 Feel free to:
