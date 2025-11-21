@@ -6,11 +6,11 @@ aws_profile  = "default"
 bucket_name        = "cryptopulse-site"
 zone_id            = ""                        # Leave empty until you create a Route53 hosted zone
 domain_name        = ""                        # No custom domain yet, will use CloudFront default
-cloudfront_zone_id = "Z2FDTNDATAQYW2"          # AWS global CloudFront zone ID (constant)
+cloudfront_zone_id = "your cloufrontID"          # AWS global CloudFront zone ID (constant)
 
 # Monitoring
 topic_name   = "CryptoPulseAlerts"
-alert_email  = "emmanuela_prince@yahoo.com"
+alert_email  = "your mall"
 
 # RDS
 db_name      = "cryptopulse-db"
@@ -19,5 +19,5 @@ replica_zone = "us-east-1b"
 # Kinesis
 stream_name  = "cryptopulse-stream"
 
-db_password = "SuperSecurePass123!"
+db_password = "your DB Password!"
 
