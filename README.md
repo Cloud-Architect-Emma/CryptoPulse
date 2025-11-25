@@ -34,9 +34,9 @@ GitHub Actions — full CI/CD automation
 
 GitHub Pages — latest hosting platform for public demo
 
-**Architecture Diagram**
+## Architecture Diagram
 
-app-img/OIDC App.gif
+![Architecture Diagram](app-img/OIDC App.gif)
 
 📁 **For more images, open the screenshots folder**.
 
